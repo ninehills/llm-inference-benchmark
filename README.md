@@ -4,16 +4,18 @@ LLM Inference benchmark
 
 ## Inference frameworks
 
-| Framework | Docker Image | API Server  | OpenAI API Server | WebUI | Multi Models* | Multi-node | Backends | Embedding Model |
+| Framework | Docker Image | API Server  | OpenAI API Server | WebUI | Multi Models** | Multi-node | Backends | Embedding Model |
 | --------- | ------------ | ----------- | ----------------- | ----- | ------------ | ------------ | -------- | --------------- |
 | [text-generation-webui](https://github.com/oobabooga/text-generation-webui) | Yes | Yes | Yes | Yes | No | No | Transformers/llama.cpp/ExLlama/ExLlamaV2/AutoGPTQ/AutoAWQ/GPTQ-for-LLaMa/CTransformers | No |
-| [OpenLLM](https://github.com/bentoml/OpenLLM) | Yes | Yes | Yes | No | Yes | No | Transformers(int8,int4,gptq), vLLM(awq/squeezellm), TensorRT | No |
+| [OpenLLM](https://github.com/bentoml/OpenLLM) | Yes | Yes | Yes | No | No | No | Transformers(int8,int4,gptq), vLLM(awq/squeezellm), TensorRT | No |
 | [vLLM](https://github.com/vllm-project/vllm)* | Yes | Yes | Yes | No | No | No | vLLM | No |
 | [Xinference](https://github.com/xorbitsai/inference) | Yes | Yes | Yes | Yes | Yes | Yes | Transformers/vLLM/TensorRT/GGML | Yes |
 | [TGI](https://github.com/huggingface/text-generation-inference) | Yes | Yes | No | No | No | No | Transformers/AutoGPTQ/AWQ/vLLM/ExLlama/ExLlamaV2 | No |
 | [ScaleLLM](https://github.com/vectorch-ai/ScaleLLM) | Yes | Yes | Yes | Yes | No | No | Transformers/AutoGPTQ/AWQ/vLLM/ExLlama/ExLlamaV2 | No |
+| [FastChat](https://github.com/lm-sys/FastChat) | Yes | Yes | Yes | Yes | Yes | Yes | Transformers/AutoGPTQ/AWQ/vLLM/ExLlama/ExLlamaV2 | No |
 
 - *vLLM can also be used as a backend.
+- **Multi Models: support to load multiple models at the same time.
 
 ## Inference backends
 
