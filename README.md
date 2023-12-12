@@ -67,7 +67,7 @@ Data:
 | Backend | TPS@4 | QPS@4 | TPS@1 | QPS@1 | FTL@1 |
 | ------- | ----- | ----- | ----- | ----- | ----- |
 | text-generation-webui Transformer | 40.39 | 0.15 | 40.71 | 0.20 | stream failed |
-| OpenLLM Transformer | 60.79 | 0.22 | 44.91 | 0.22 | stream failed |
+| OpenLLM PyTorch | 60.79 | 0.22 | 44.91 | 0.22 | stream failed |
 | TGI | - | - | - | - | - |
 | vLLM | 222.63 | 1.08 | 60.18 | 0.30 | 2.73 |
 | TensorRT | - | - | - | - | - |
