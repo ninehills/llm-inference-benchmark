@@ -744,6 +744,7 @@ class LLMUser(HttpUser):
                     print(
                         f"WARNING: tokenizer token count {num_tokenizer_tokens} != {num_tokens} received from server"
                     )
+                    num_tokens = num_tokenizer_tokens
             num_tokens = num_tokens or 0
             num_chars = len(combined_text)
             now = time.perf_counter()

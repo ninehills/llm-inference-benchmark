@@ -47,12 +47,12 @@ Software:
 - NVIDIA Driver Version: 536.67
 - CUDA Version: 12.2
 - PyTorch: 2.1.1
-- Transformers: 4.35.2
 
 Model:
 
 - BFloat16: [01-ai/Yi-6B-Chat](https://huggingface.co/01-ai/Yi-6B-Chat)
 - GPTQ 4bits: [TheBloke/Yi-34B-GPTQ](https://huggingface.co/TheBloke/Yi-34B-GPTQ)
+- GPTQ 8bits: [01-ai/Yi-6B-Chat-4bits](https://huggingface.co/01-ai/Yi-6B-Chat-8bits)
 - AWQ 4bits: [01-ai/Yi-6B-Chat-4bits](https://huggingface.co/01-ai/Yi-6B-Chat-4bits)
 
 Data:
@@ -67,26 +67,29 @@ Data:
 | Backend | TPS@4 | QPS@4 | TPS@1 | QPS@1 | FTL@1 |
 | ------- | ----- | ----- | ----- | ----- | ----- |
 | text-generation-webui Transformer | 40.39 | 0.15 | 40.71 | 0.20 | stream failed |
-| OpenLLM Transformer | - | - | - | - | - |
+| OpenLLM Transformer | 60.79 | 0.22 | 44.91 | 0.22 | stream failed |
 | TGI | - | - | - | - | - |
 | vLLM | 222.63 | 1.08 | 60.18 | 0.30 | 2.73 |
+| TensorRT | - | - | - | - | - |
+| CTranslate2 | - | - | - | - | - |
 
-- *bs: Batch Size, bs=4 means batch size is 4.
-- *TPS: Tokens per Second, TPS=200 means 200 tokens per second.
-- *QPS: Query per Second, QPS=1.08 means 1.08 queries per second.
-- *FTS: First Token Latency, 2.73ms means 2.73 milliseconds. ONLY in stream mode.
+- bs: Batch Size, bs=4 means batch size is 4.
+- TPS: Tokens per Second, TPS=200 means 200 tokens per second.
+- QPS: Query per Second, QPS=1.08 means 1.08 queries per second.
+- FTL: First Token Latency, 2.73ms means 2.73 milliseconds. ONLY in stream mode.
 
 #### 8Bit Quantisation
 
-| Backend | Tokens per Second(bs=4)| Query per Second(bs=4) | First Token Latency(bs=4) | Tokens per Second(bs=1) | Query per Second(bs=1) | First Token Latency(bs=1) |
-| ------- | ---------------------- | ---------------------- | ------------------------- | ---------------------- | ---------------------- | ------------------------- |
-| OpenLLM Transformers Int8 | - | - | - | - | - | - |
+| Backend | TPS@4 | QPS@4 | TPS@1 | QPS@1 | FTL@1 |
+| ------- | ----- | ----- | ----- | ----- | ----- |
+| text-generation-webui GPTQ 8bits | - | - | - | - | - |
 
+- bitsandbytes is very slow (int8 6.8 tokens/s), so we don't benchmark it.
 
 #### 4Bit Quantisation
 
-| Backend | Tokens per Second(bs=4)| Query per Second(bs=4) | First Token Latency(bs=4) | Tokens per Second(bs=1) | Query per Second(bs=1) | First Token Latency(bs=1) |
-| ------- | ---------------------- | ---------------------- | ------------------------- | ---------------------- | ---------------------- | ------------------------- |
-| OpenLLM GPTQ 4bits | - | - | - | - | - | - |
-| TGI ExLLamaV2 GPTQ 4bits | - | - | - | - | - | - |
-| vLLM AWQ 4bits | - | - | - | - | - | - |
+| Backend | TPS@4 | QPS@4 | TPS@1 | QPS@1 | FTL@1 |
+| ------- | ----- | ----- | ----- | ----- | ----- |
+| OpenLLM GPTQ 4bits | - | - | - | - | - |
+| TGI ExLLamaV2 GPTQ 4bits | - | - | - | - | - |
+| vLLM AWQ 4bits | - | - | - | - | - |
