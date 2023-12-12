@@ -12,7 +12,7 @@ LLM Inference benchmark
 | [Xinference](https://github.com/xorbitsai/inference) | Yes | Yes | Yes | Yes | Yes | Yes | Transformers/vLLM/TensorRT/GGML | Yes |
 | [TGI](https://github.com/huggingface/text-generation-inference) | Yes | Yes | No | No | No | No | Transformers/AutoGPTQ/AWQ/vLLM/ExLlama/ExLlamaV2 | No |
 | [ScaleLLM](https://github.com/vectorch-ai/ScaleLLM) | Yes | Yes | Yes | Yes | No | No | Transformers/AutoGPTQ/AWQ/vLLM/ExLlama/ExLlamaV2 | No |
-| [FastChat](https://github.com/lm-sys/FastChat) | Yes | Yes | Yes | Yes | Yes | Yes | Transformers/AutoGPTQ/AWQ/vLLM/ExLlama/ExLlamaV2 | No |
+| [FastChat](https://github.com/lm-sys/FastChat) | Yes | Yes | Yes | Yes | Yes | Yes | Transformers/AutoGPTQ/AWQ/vLLM/ExLlama/ExLlamaV2 | Yes |
 
 - *vLLM can also be used as a backend.
 - **Multi Models: support to load multiple models at the same time.
