@@ -66,17 +66,17 @@ Data:
 
 | Backend | TPS@4 | QPS@4 | TPS@1 | QPS@1 | FTL@1 |
 | ------- | ----- | ----- | ----- | ----- | ----- |
-| text-generation-webui Transformer | 40.39 | 0.15 | 40.71 | 0.20 | stream failed |
-| OpenLLM PyTorch | 60.79 | 0.22 | 44.91 | 0.22 | stream failed |
+| text-generation-webui Transformer | 40.39 | 0.15 | 41.47 | 0.21 | 344.61 |
+| OpenLLM PyTorch | 60.79 | 0.22 | 44.73 | 0.21 | 514.55 |
 | TGI | - | - | - | - | - |
-| vLLM | 222.63 | 1.08 | 60.18 | 0.30 | 2.73 |
+| vLLM | 222.63 | 1.08 | 62.69 | 0.30 | 95.43 |
 | TensorRT | - | - | - | - | - |
 | CTranslate2 | - | - | - | - | - |
 
 - bs: Batch Size, bs=4 means batch size is 4.
-- TPS: Tokens per Second, TPS=200 means 200 tokens per second.
-- QPS: Query per Second, QPS=1.08 means 1.08 queries per second.
-- FTL: First Token Latency, 2.73ms means 2.73 milliseconds. ONLY in stream mode.
+- TPS: Tokens per Second.
+- QPS: Query per Second.
+- FTL: First Token Latency, ms. ONLY in stream mode.
 
 #### 8Bit Quantisation
 

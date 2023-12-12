@@ -276,6 +276,9 @@ class OpenAIProvider(BaseProvider):
         else:
             text = choice["text"]
 
+        if text is None:
+            text = ""
+
         logprobs = choice.get("logprobs", None)
         return ChunkMetadata(
             text=text,
@@ -683,13 +686,11 @@ class LLMUser(HttpUser):
             except Exception as e:
                 raise RuntimeError(f"Error in response: {response.text}") from e
             t_first_token = None
-            for chunk in response.iter_lines(delimiter=b"\n\n"):
-                if t_first_token is None:
-                    t_first_token = time.perf_counter()
-                    t_prev = time.perf_counter()
-
-                if len(chunk) == 0:
+            for chunk in response.iter_lines(delimiter=b"\n"):
+                if len(chunk.strip()) == 0:
                     continue  # come providers send empty lines between data chunks
+                if t_first_token is None:
+                    t_prev = time.perf_counter()
                 if done:
                     if chunk != b"data: [DONE]":
                         print(f"WARNING: Received more chunks after [DONE]: {chunk}")
@@ -706,6 +707,7 @@ class LLMUser(HttpUser):
                             done = True
                             continue
                     data = orjson.loads(chunk)
+                    # print(f"Received chunk: {data}")
                     out = self.provider_formatter.parse_output_json(data, prompt)
                     if out.usage_tokens:
                         total_usage_tokens = (
@@ -713,6 +715,9 @@ class LLMUser(HttpUser):
                         ) + out.usage_tokens
                     if out.prompt_usage_tokens:
                         prompt_usage_tokens = out.prompt_usage_tokens
+                    if out.text and t_first_token is None:
+                        print(f"First token received: {out.text}")
+                        t_first_token = time.perf_counter()
                     combined_text += out.text
 
                     if out.logprob_tokens:
@@ -722,6 +727,7 @@ class LLMUser(HttpUser):
                 except Exception as e:
                     print(f"Failed to parse response: {chunk} with error {repr(e)}")
                     response.failure(e)
+                    sys.exit(1)
                     return
             assert t_first_token is not None, "empty response received"
             if (
