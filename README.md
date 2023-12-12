@@ -53,10 +53,10 @@ Model:
 - GPTQ 4bits: [TheBloke/Yi-34B-GPTQ](https://huggingface.co/TheBloke/Yi-34B-GPTQ)
 - AWQ 4bits: [01-ai/Yi-6B-Chat-4bits](https://huggingface.co/01-ai/Yi-6B-Chat-4bits)
 
-Datasets:
+Data:
 
-- Datasets: TODO.
-- Average Prompt Length: TODO.
+- Prompt Length: 512 (with some random characters to avoid cache).
+- Max Tokens: 200.
 
 ### Backend Benchmark
 
