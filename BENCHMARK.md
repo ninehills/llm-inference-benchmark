@@ -126,6 +126,58 @@ Qps                : 0.3030379118901777
 Tokens per Second = 1000 / 15.952094820770412 = 62.69
 ```
 
+### vllm awq 4bit
+
+```bash
+python -m vllm.entrypoints.openai.api_server --model ~/models/Yi-6B-Chat-4bits --served-model-name Yi-6B-Chat --port 8000
+```
+
+bs=4:
+
+```bash
+locust -t 30s --provider openai -u 4 -r 4 -H http://127.0.0.1:8000 -p 512 -o 200 --prompt-randomize --api-key EMPTY --model=Yi-6B-Chat --chat
+=================================== Summary ====================================
+Provider           : openai
+Model              : Yi-6B-Chat
+Prompt Tokens      : 521.0
+Generation Tokens  : 200
+Stream             : False
+Temperature        : 1.0
+Logprobs           : None
+Concurrency        : 4
+Time To First Token:
+Latency Per Token  :
+Num Tokens         : 200.0
+Total Latency      : 27554.97828125044
+Num Requests       : 4
+Qps                : 0.14136221506152755
+================================================================================
+Tokens per Second = 200.0 * 1000 / 27554.97828125044 * 4 = 29.03
+```
+
+bs=1 (stream=True)
+
+```bash
+locust -t 30s --provider openai -u 1 -r 1 -H http://127.0.0.1:8000 -p 512 -o 200 --prompt-randomize --api-key EMPTY --model=Yi-6B-Chat --chat --stream
+=================================== Summary ====================================
+Provider           : openai
+Model              : Yi-6B-Chat
+Prompt Tokens      : 521.0
+Generation Tokens  : 200
+Stream             : True
+Temperature        : 1.0
+Logprobs           : None
+Concurrency        : 1
+Time To First Token: 3711.018990400771
+Latency Per Token  : 8.0338363266309
+Num Tokens         : 199.0
+Total Latency      : 5309.75241940032
+Num Requests       : 5
+Qps                : 0.18570599438259272
+================================================================================
+Tokens per Second = 199.0 * 1000 / 5309.75241940032 = 37.48
+```
+
 ### openllm
 
 - openllm: 0.4.36
@@ -200,14 +252,243 @@ data: {"choices":[{"index":0,"delta":{"role":"assistant","content":null},"finish
 data: {"choices":[{"index":0,"delta":{"role":null,"content":"I"},"finish_reason":null}],"model":"Yi-6B-Chat","object":"chat.completion.chunk","id":"chatcmpl-5ec7180a3f114ea4a5e300fe84bb1d45","created":1141,"usage":null}
 ```
 
-### openllm int8
+### openllm with ctranlate2 backend
+
+- ctranslate2: 3.23.0
 
 ```bash
-openllm start ~/models/Yi-6B-Chat --backend pt --quantize int8
+ct2-transformers-converter --model ~/models/Yi-6B-Chat --output_dir ~/models/Yi-6B-Chat-CT2
+openllm start ~/models/Yi-6B-Chat-CT2 --backend ctranslate2
+# ValueError: Vocabulary has size 64002 but the model expected a vocabulary of size 64000
+
 ```
 
-not work ...
+### OpenLLM PyTorch AutoGPTQ 8bit
+
+```bash
+openllm start ~/models/Yi-6B-Chat-8bits --quantize gptq --backend pt
+```
+
+bs=4:
+
+```bash
+locust -t 30s --provider openai -u 4 -r 4 -H http://127.0.0.1:3000 -p 512 -o 200 --prompt-randomize --api-key EMPTY --model=Yi-6B-Chat-8bits --chat --tokenizer ~/models/Yi-6B-Chat/
+=================================== Summary ====================================
+Provider           : openai
+Model              : Yi-6B-Chat-8bits
+Prompt Tokens      : 521.0
+Generation Tokens  : 200
+Stream             : False
+Temperature        : 1.0
+Logprobs           : None
+Concurrency        : 4
+Time To First Token:
+Latency Per Token  :
+Num Tokens         : 199.6
+Total Latency      : 16030.683385800512
+Num Requests       : 5
+Qps                : 0.16886672302718517
+================================================================================
+Tokens per Second = 199.6 * 1000 / 16030.683385800512 * 4 = 49.8
+```
+
+bs=1 (stream=True)
+
+```bash
+locust -t 30s --provider openai -u 1 -r 1 -H http://127.0.0.1:3000 -p 512 -o 200 --prompt-randomize --api-key EMPTY --model=Yi-6B-Chat-8bits --chat --tokenizer ~/models/Yi-6B-Chat/ --stream
+=================================== Summary ====================================
+Provider           : openai
+Model              : Yi-6B-Chat-8bits
+Prompt Tokens      : 521.0
+Generation Tokens  : 200
+Stream             : True
+Temperature        : 1.0
+Logprobs           : None
+Concurrency        : 1
+Time To First Token: 930.1576654997916
+Latency Per Token  : 29.186903690066032
+Num Tokens         : 199.25
+Total Latency      : 6745.946536500924
+Num Requests       : 4
+Qps                : 0.14105498471447578
+================================================================================
+Tokens per Second = 199.25 * 1000 / 6745.946536500924 = 29.54
+```
 
 ### TGI
 
 - TGI: `ghcr.io/huggingface/text-generation-inference:1.3`
+
+```bash
+docker run --gpus all --shm-size 1g -p 8080:80 -v $HOME/models:/models ghcr.io/huggingface/text-generation-inference:1.3 --model-id /models/Yi-6B-Chat/
+```
+
+bs=4:
+
+```bash
+locust -t 30s --provider tgi -u 4 -r 4 -H http://127.0.0.1:8080 -p 512 -o 200 --prompt-randomize --api-key EMPTY --model=Yi-6B-Chat --tokenizer ~/models/Yi-6B-Chat/
+=================================== Summary ====================================
+Provider           : tgi
+Model              : Yi-6B-Chat
+Prompt Tokens      : 512.0
+Generation Tokens  : 200
+Stream             : False
+Temperature        : 1.0
+Logprobs           : None
+Concurrency        : 4
+Time To First Token:
+Latency Per Token  :
+Num Tokens         : 201.0
+Total Latency      : 4174.993880417333
+Num Requests       : 24
+Qps                : 0.8994352935752348
+================================================================================
+Tokens per Second = 201.0 * 1000 / 4174.993880417333 * 4 = 192.58
+```
+
+bs=1 (stream=True)
+
+```bash
+locust -t 30s --provider tgi -u 1 -r 1 -H http://127.0.0.1:8080 -p 512 -o 200 --prompt-randomize --api-key EMPTY --model=Yi-6B-Chat --tokenizer ~/models/Yi-6B-Chat/ --stream
+=================================== Summary ====================================
+Provider           : tgi
+Model              : Yi-6B-Chat
+Prompt Tokens      : 512.0
+Generation Tokens  : 200
+Stream             : True
+Temperature        : 1.0
+Logprobs           : None
+Concurrency        : 1
+Time To First Token: 82.72327187569317
+Latency Per Token  : 16.344612457709246
+Num Tokens         : 201.0
+Total Latency      : 3367.9903758752516
+Num Requests       : 8
+Qps                : 0.28337154388750857
+================================================================================
+Tokens per Second = 201.0 * 1000 / 3367.9903758752516 = 59.68
+```
+
+### TGI eetq 8bits
+
+```bash
+docker run --gpus all --shm-size 1g -p 8080:80 -v $HOME/models:/models ghcr.io/huggingface/text-generation-inference:1.3 --model-id /models/Yi-6B-Chat/  --quantize eetq
+```
+
+bs=4:
+
+```bash
+locust -t 30s --provider tgi -u 4 -r 4 -H http://127.0.0.1:8080 -p 512 -o 200 --prompt-randomize --api-key EMPTY --model=Yi-6B-Chat --tokenizer ~/models/Yi-6B-Chat/
+=================================== Summary ====================================
+Provider           : tgi
+Model              : Yi-6B-Chat
+Prompt Tokens      : 512.0
+Generation Tokens  : 200
+Stream             : False
+Temperature        : 1.0
+Logprobs           : None
+Concurrency        : 4
+Time To First Token:
+Latency Per Token  :
+Num Tokens         : 201.0
+Total Latency      : 2743.3126421247835
+Num Requests       : 40
+Qps                : 1.412311945513493
+================================================================================
+Tokens per Second = 201.0 * 1000 / 2743.3126421247835 * 4 = 293.08
+```
+
+
+bs=1 (stream=True)
+
+```bash
+locust -t 30s --provider tgi -u 1 -r 1 -H http://127.0.0.1:8080 -p 512 -o 200 --prompt-randomize --api-key EMPTY --model=Yi-6B-Chat --tokenizer ~/models/Yi-6B-Chat/ --stream
+=================================== Summary ====================================
+Provider           : tgi
+Model              : Yi-6B-Chat
+Prompt Tokens      : 512.0
+Generation Tokens  : 200
+Stream             : True
+Temperature        : 1.0
+Logprobs           : None
+Concurrency        : 1
+Time To First Token: 63.688626499849
+Latency Per Token  : 11.036175770314124
+Num Tokens         : 201.0
+Total Latency      : 2281.959956332988
+Num Requests       : 12
+Qps                : 0.41932061487434896
+================================================================================
+Tokens per Second = 201.0 * 1000 / 2281.959956332988 = 88.08
+```
+
+### TGI GPTQ 8bit
+
+```bash
+docker run --gpus all --shm-size 1g -p 8080:80 -v $HOME/models:/models ghcr.io/huggingface/text-generation-inference:1.3 --model-id /models/Yi-6B-Chat-8bits/  --quantize gptq
+```
+
+run failed:
+```
+  File "/opt/conda/lib/python3.10/site-packages/text_generation_server/utils/gptq/custom_autotune.py", line 110, in run
+    timings = {
+  File "/opt/conda/lib/python3.10/site-packages/text_generation_server/utils/gptq/custom_autotune.py", line 111, in <dictcomp>
+    config: self._bench(*args, config=config, **kwargs)
+  File "/opt/conda/lib/python3.10/site-packages/text_generation_server/utils/gptq/custom_autotune.py", line 93, in _bench
+    except triton.compiler.OutOfResources:
+AttributeError: module 'triton.compiler' has no attribute 'OutOfResources'
+
+2023-12-13T04:50:46.327283Z ERROR warmup{max_input_length=1024 max_prefill_tokens=4096 max_total_tokens=2048}:warmup: text_generation_client: router/client/src/lib.rs:33: Server error: module 'triton.compiler' has no attribute 'OutOfResources'
+Error: Warmup(Generation("module 'triton.compiler' has no attribute 'OutOfResources'"))
+```
+
+### TGI AWQ 4bit
+
+```bash
+docker run --gpus all --shm-size 1g -p 8080:80 -v $HOME/models:/models ghcr.io/huggingface/text-generation-inference:1.3 --model-id /models/Yi-6B-Chat-4bits/  --quantize awq
+```
+
+```bash
+locust -t 30s --provider tgi -u 4 -r 4 -H http://127.0.0.1:8080 -p 512 -o 200 --prompt-randomize --api-key EMPTY --model=Yi-6B-Chat-4bits --tokenizer ~/models/Yi-6B-Chat/
+=================================== Summary ====================================
+Provider           : tgi
+Model              : Yi-6B-Chat-4bits
+Prompt Tokens      : 512.0
+Generation Tokens  : 200
+Stream             : False
+Temperature        : 1.0
+Logprobs           : None
+Concurrency        : 4
+Time To First Token:
+Latency Per Token  :
+Num Tokens         : 201.0
+Total Latency      : 2389.495087416966
+Num Requests       : 48
+Qps                : 1.6070709188302736
+================================================================================
+Tokens per Second = 201.0 * 1000 / 2389.495087416966 * 4 = 336.47
+```
+
+
+bs=1 (stream=True)
+
+```bash
+locust -t 30s --provider tgi -u 1 -r 1 -H http://127.0.0.1:8080 -p 512 -o 200 --prompt-randomize --api-key EMPTY --model=Yi-6B-Chat-4bits --tokenizer ~/models/Yi-6B-Chat/ --stream
+=================================== Summary ====================================
+Provider           : tgi
+Model              : Yi-6B-Chat-4bits
+Prompt Tokens      : 512.0
+Generation Tokens  : 200
+Stream             : True
+Temperature        : 1.0
+Logprobs           : None
+Concurrency        : 1
+Time To First Token: 94.83826021460118
+Latency Per Token  : 9.332065425378078
+Num Tokens         : 201.0
+Total Latency      : 1970.583410715595
+Num Requests       : 14
+Qps                : 0.4837730641324824
+================================================================================
+Tokens per Second = 201.0 * 1000 / 1970.583410715595 = 102.00
+```
