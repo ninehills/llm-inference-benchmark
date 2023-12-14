@@ -72,6 +72,104 @@ Tokens per Second = 198.66666666666666 * 1000 / 4790.3946911666635 = 41.47
 
 Stream mode failed because of the delimiter is '\r\n\r\n'.
 
+### text-generation-webui with flash_attention_2
+
+bs=4
+
+```bash
+locust -t 30s --provider openai -u 4 -r 4 -H http://127.0.0.1:5000 -p 512 -o 200 --prompt-randomize --api-key EMPTY --model=Yi-6B-Chat --chat
+=================================== Summary ====================================
+Provider           : openai
+Model              : Yi-6B-Chat
+Prompt Tokens      : 543.0
+Generation Tokens  : 200
+Stream             : False
+Temperature        : 1.0
+Logprobs           : None
+Concurrency        : 4
+Time To First Token:
+Latency Per Token  :
+Num Tokens         : 199.33333333333334
+Total Latency      : 13678.096362666678
+Num Requests       : 6
+Qps                : 0.21237510617563718
+================================================================================
+Tokens per Second = 199.33333333333334 * 1000 / 13678.096362666678 * 4 = 58.30
+``````
+
+bs=1 (stream=True)
+
+```bash
+locust -t 30s --provider openai -u 1 -r 1 -H http://127.0.0.1:5000 -p 512 -o 200 --prompt-randomize --api-key EMPTY --model=Yi-6B-Chat --chat --stream
+=================================== Summary ====================================
+Provider           : openai
+Model              : Yi-6B-Chat
+Prompt Tokens      : 543.0
+Generation Tokens  : 200
+Stream             : True
+Temperature        : 1.0
+Logprobs           : None
+Concurrency        : 1
+Time To First Token: 341.38877033338605
+Latency Per Token  : 21.25158606708791
+Num Tokens         : 197.83333333333334
+Total Latency      : 4545.68322066666
+Num Requests       : 6
+Qps                : 0.21416693458287103
+================================================================================
+Tokens per Second = 197.83333333333334 * 1000 / 4545.68322066666 = 43.52
+```
+
+### text-generation-webui exllamav2
+
+bs=4:
+
+```bash
+locust -t 30s --provider openai -u 4 -r 4 -H http://127.0.0.1:5000 -p 512 -o 200 --prompt-randomize --api-key EMPTY --model=Yi-6B-Chat --chat
+=================================== Summary ====================================
+Provider           : openai
+Model              : Yi-6B-Chat
+Prompt Tokens      : 545.0
+Generation Tokens  : 200
+Stream             : False
+Temperature        : 1.0
+Logprobs           : None
+Concurrency        : 4
+Time To First Token:
+Latency Per Token  :
+Num Tokens         : 200.85714285714286
+Total Latency      : 11629.082029142834
+Num Requests       : 7
+Qps                : 0.26460306018954366
+================================================================================
+Tokens per Second = 200.85714285714286 * 1000 / 11629.082029142834 * 4 = 69.09
+```
+
+bs=1 (stream=True)
+
+```bash
+locust -t 30s --provider openai -u 1 -r 1 -H http://127.0.0.1:5000 -p 512 -o 200 --prompt-randomize --api-key EMPTY --model=Yi-6B-Chat --chat --stream
+=================================== Summary ====================================
+Provider           : openai
+Model              : Yi-6B-Chat
+Prompt Tokens      : 545.0
+Generation Tokens  : 200
+Stream             : True
+Temperature        : 1.0
+Logprobs           : None
+Concurrency        : 1
+Time To First Token: 564.7956175714301
+Latency Per Token  : 16.78803703481999
+Num Tokens         : 189.57142857142858
+Total Latency      : 3738.303490000005
+Num Requests       : 7
+Qps                : 0.2666246244330199
+================================================================================
+Tokens per Second = 189.57142857142858 * 1000 / 3738.303490000005 = 50.71
+```
+
+### text-generation-webui llama.cpp
+
 ### vllm
 
 - vllm: 0.2.4
@@ -499,6 +597,9 @@ Tokens per Second = 201.0 * 1000 / 1970.583410715595 = 102.00
 git clone https://github.com/abetlen/llama-cpp-python.git
 cd llama-cpp-python/docker/cuda_simple
 docker build -t llama-cpp-python:cuda .
+
+// or use pip
+CMAKE_ARGS="-DLLAMA_CUBLAS=on" pip install llama-cpp-python
 
 docker run --rm --cap-add SYS_RESOURCE -e USE_MLOCK=0 -e MODEL=/var/model/xxx.gguf -v $HOME/models:/var/model -t llama-cpp-python:cuda
 ```

@@ -29,10 +29,11 @@ LLM Inference benchmark
 | [Candle](https://github.com/huggingface/candle) | GPU/CPU | Low | No | No | Yes | Yes | Yes |
 | [CTranslate2](https://github.com/OpenNMT/CTranslate2) | GPU | Low | No | Yes | Yes | Yes | Yes |
 | [TGI](https://github.com/huggingface/text-generation-inference) | GPU | Medium | Yes | awq/eetq/gptq/bitsandbytes | Yes | Yes | Yes |
-| [llama-cpp-python](https://github.com/abetlen/llama-cpp-python) | GPU/CPU | High | No | GGUF/GPTQ | Yes | No | Yes |
+| [llama-cpp](https://github.com/ggerganov/llama.cpp)*** | GPU/CPU | High | No | GGUF/GPTQ | Yes | No | Yes |
 
 - *PEFT Adapters: support to load seperate PEFT adapters(mostly lora).
 - **Compatibility: High: Compatible with most models; Medium: Compatible with some models; Low: Compatible with few models.
+- ***llama.cpp's Python binding: [llama-cpp-python](https://github.com/abetlen/llama-cpp-python).
 
 ## Benchmark
 
@@ -69,6 +70,8 @@ Data:
 | Backend | TPS@4 | QPS@4 | TPS@1 | QPS@1 | FTL@1 |
 | ------- | ----- | ----- | ----- | ----- | ----- |
 | text-generation-webui Transformer | 40.39 | 0.15 | 41.47 | 0.21 | 344.61 |
+| text-generation-webui Transformer with flash-attention-2 | 58.30 | 0.21 | 43.52 | 0.21 | 341.39 |
+| text-generation-webui ExllamaV2 | 69.09 | 0.26 | 50.71 | 0.27 | 564.80 |
 | OpenLLM PyTorch | 60.79 | 0.22 | 44.73 | 0.21 | 514.55 |
 | TGI | 192.58 | 0.90 | 59.68 | 0.28 | 82.72 |
 | vLLM | 222.63 | 1.08 | 62.69 | 0.30 | 95.43 |
@@ -89,7 +92,6 @@ Data:
 | TGI eetq 8bit | 293.08 | 1.41 | 88.08 | 0.42 | 63.69 |
 | TGI GPTQ 8bit | - | - | - | - | - |
 | OpenLLM PyTorch AutoGPTQ 8bit | 49.8 | 0.17 | 29.54 | 0.14 | 930.16 |
-| llama-cpp-python GGUF 8bit| - | - | - | - | - |
 
 - bitsandbytes is very slow (int8 6.8 tokens/s), so we don't benchmark it.
 - eetq-8bit doesn't require specific model.
@@ -102,5 +104,4 @@ Data:
 | ------- | ----- | ----- | ----- | ----- | ----- |
 | TGI AWQ 4bit | 336.47 | 1.61 | 102.00 | 0.48 | 94.84 |
 | vLLM AWQ 4bit | 29.03 | 0.14 | 37.48 | 0.19 | 3711.0 |
-| llama-cpp-python GGUF 4bit| - | - | - | - | - |
-| llama-cpp-python GGUF 4bit with CPU | - | - | - | - | - |
+| text-generation-webui llama-cpp GGUF 4bit| 67.63 | 0.37 | 56.65 | 0.34 | 331.57 |
