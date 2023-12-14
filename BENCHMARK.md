@@ -170,6 +170,53 @@ Tokens per Second = 189.57142857142858 * 1000 / 3738.303490000005 = 50.71
 
 ### text-generation-webui llama.cpp
 
+bs = 4:
+
+```bash
+locust -t 30s --provider openai -u 4 -r 4 -H http://127.0.0.1:5000 -p 512 -o 200 --prompt-randomize --api-key EMPTY --model=Yi-6B-Chat --chat
+=================================== Summary ====================================
+Provider           : openai
+Model              : Yi-6B-Chat
+Prompt Tokens      : 544.0
+Generation Tokens  : 200
+Stream             : False
+Temperature        : 1.0
+Logprobs           : None
+Concurrency        : 4
+Time To First Token:
+Latency Per Token  :
+Num Tokens         : 156.2
+Total Latency      : 9238.212034200023
+Num Requests       : 10
+Qps                : 0.36761348207202127
+================================================================================
+Tokens per Second = 156.2 * 1000 / 9238.212034200023 * 4 = 67.63
+```
+
+bs = 1 (stream=True):
+
+```bash
+locust -t 30s --provider openai -u 1 -r 1 -H http://127.0.0.1:5000 -p 512 -o 200 --prompt-randomize --api-key EMPTY --model=Yi-6B-Chat --chat --stream
+=================================== Summary ====================================
+Provider           : openai
+Model              : Yi-6B-Chat
+Prompt Tokens      : 544.0
+Generation Tokens  : 200
+Stream             : True
+Temperature        : 1.0
+Logprobs           : None
+Concurrency        : 1
+Time To First Token: 331.5702535555829
+Latency Per Token  : 16.997582828708413
+Num Tokens         : 164.22222222222223
+Total Latency      : 2898.9455936666673
+Num Requests       : 9
+Qps                : 0.335439284269627
+================================================================================
+Tokens per Second = 164.22222222222223 * 1000 / 2898.9455936666673 = 56.65
+
+```
+
 ### vllm
 
 - vllm: 0.2.4
