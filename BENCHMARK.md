@@ -492,3 +492,37 @@ Qps                : 0.4837730641324824
 ================================================================================
 Tokens per Second = 201.0 * 1000 / 1970.583410715595 = 102.00
 ```
+
+### llama-cpp cuda
+
+```bash
+git clone https://github.com/abetlen/llama-cpp-python.git
+cd llama-cpp-python/docker/cuda_simple
+docker build -t llama-cpp-python:cuda .
+
+docker run --rm --cap-add SYS_RESOURCE -e USE_MLOCK=0 -e MODEL=/var/model/xxx.gguf -v $HOME/models:/var/model -t llama-cpp-python:cuda
+```
+
+8bit GGUF:
+https://huggingface.co/TheBloke/Yi-6B-GGUF/resolve/main/yi-6b.Q8_0.gguf?download=true
+
+4bit GGUF:
+https://huggingface.co/TheBloke/Yi-6B-GGUF/resolve/main/yi-6b.Q4_K_M.gguf?download=true
+
+#### 8bit GGUF
+
+```bash
+docker run --rm --cap-add SYS_RESOURCE -e USE_MLOCK=0 --gpus all -e MODEL=/var/model/yi-6b.Q8_0.gguf -v $HOME/models/Yi-6B-GGUF:/var/model -t llama-cpp-python:cuda
+```
+
+#### 4bit GGUF
+
+```bash
+docker run --rm --cap-add SYS_RESOURCE -e USE_MLOCK=0 --gpus all  -e MODEL=/var/model/yi-6b.Q4_K_M.gguf -v $HOME/models/Yi-6B-GGUF:/var/model -t llama-cpp-python:cuda
+```
+
+#### 4bit GGUF with CPU
+
+```bash
+docker run --rm --cap-add SYS_RESOURCE -e USE_MLOCK=0 --gpus all  -e MODEL=/var/model/yi-6b.Q4_K_M.gguf -v $HOME/models/Yi-6B-GGUF:/var/model -t ghcr.io/abetlen/llama-cpp-python:latest
+```

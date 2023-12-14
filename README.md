@@ -20,17 +20,16 @@ LLM Inference benchmark
 
 ## Inference backends
 
-We only choose the backends that runned on GPU.
-
-| Backend | Compatibility** | PEFT Adapters* | Quatisation | Batching | Distributed Inference | Streaming |
-| ------- | ------------- | ---------- | -------- | ----------- | --------- | ----------- |
-| [Transformers](https://github.com/huggingface/transformers) | High | Yes | [bitsandbytes](https://github.com/TimDettmers/bitsandbytes)(int8/int4), [AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ)(gptq), AutoAWQ(awq) | Yes | [accelerate](https://huggingface.co/docs/accelerate/index) | Yes |
-| [vLLM](https://github.com/vllm-project/vllm) | High | No | awq/squeezellm | Yes | Yes | Yes |
-| [ExLlamaV2](https://github.com/turboderp/exllamav2) | Low | No | GPTQ | Yes | Yes | Yes |
-| [TensorRT](https://github.com/NVIDIA/TensorRT-LLM) | Medium | No | [some models](https://github.com/NVIDIA/TensorRT-LLM/blob/main/docs/source/precision.md) | Yes | Yes | Yes |
-| [Candle](https://github.com/huggingface/candle) | Low | No | No | Yes | Yes | Yes |
-| [CTranslate2](https://github.com/OpenNMT/CTranslate2) | Low | No | Yes | Yes | Yes | Yes |
-| [TGI](https://github.com/huggingface/text-generation-inference) | Medium | Yes | awq/eetq/gptq/bitsandbytes | Yes | Yes | Yes |
+| Backend | Device | Compatibility** | PEFT Adapters* | Quatisation | Batching | Distributed Inference | Streaming |
+| ------- | ------ | ------------- | ---------- | -------- | ----------- | --------- | ----------- |
+| [Transformers](https://github.com/huggingface/transformers) | GPU | High | Yes | [bitsandbytes](https://github.com/TimDettmers/bitsandbytes)(int8/int4), [AutoGPTQ](https://github.com/PanQiWei/AutoGPTQ)(gptq), AutoAWQ(awq) | Yes | [accelerate](https://huggingface.co/docs/accelerate/index) | Yes |
+| [vLLM](https://github.com/vllm-project/vllm) | GPU | High | No | awq/squeezellm | Yes | Yes | Yes |
+| [ExLlamaV2](https://github.com/turboderp/exllamav2) | GPU/CPU | Low | No | GPTQ | Yes | Yes | Yes |
+| [TensorRT](https://github.com/NVIDIA/TensorRT-LLM) | GPU | Medium | No | [some models](https://github.com/NVIDIA/TensorRT-LLM/blob/main/docs/source/precision.md) | Yes | Yes | Yes |
+| [Candle](https://github.com/huggingface/candle) | GPU/CPU | Low | No | No | Yes | Yes | Yes |
+| [CTranslate2](https://github.com/OpenNMT/CTranslate2) | GPU | Low | No | Yes | Yes | Yes | Yes |
+| [TGI](https://github.com/huggingface/text-generation-inference) | GPU | Medium | Yes | awq/eetq/gptq/bitsandbytes | Yes | Yes | Yes |
+| [llama-cpp-python](https://github.com/abetlen/llama-cpp-python) | GPU/CPU | High | No | GGUF/GPTQ | Yes | No | Yes |
 
 - *PEFT Adapters: support to load seperate PEFT adapters(mostly lora).
 - **Compatibility: High: Compatible with most models; Medium: Compatible with some models; Low: Compatible with few models.
@@ -56,6 +55,7 @@ Model:
 - BFloat16: [01-ai/Yi-6B-Chat](https://huggingface.co/01-ai/Yi-6B-Chat)
 - GPTQ 8bit: [01-ai/Yi-6B-Chat-8bits](https://huggingface.co/01-ai/Yi-6B-Chat-8bits)
 - AWQ 4bit: [01-ai/Yi-6B-Chat-4bits](https://huggingface.co/01-ai/Yi-6B-Chat-4bits)
+- GGUF 8bit/4bit: [TheBloke/Yi-6B-GGUF](https://huggingface.co/TheBloke/Yi-6B-GGUF)
 
 Data:
 
@@ -87,13 +87,14 @@ Data:
 | Backend | TPS@4 | QPS@4 | TPS@1 | QPS@1 | FTL@1 |
 | ------- | ----- | ----- | ----- | ----- | ----- |
 | TGI eetq 8bit | 293.08 | 1.41 | 88.08 | 0.42 | 63.69 |
-| TGT GPTQ 8bit | - | - | - | - | - |
+| TGI GPTQ 8bit | - | - | - | - | - |
 | OpenLLM PyTorch AutoGPTQ 8bit | 49.8 | 0.17 | 29.54 | 0.14 | 930.16 |
+| llama-cpp-python GGUF 8bit| - | - | - | - | - |
 
 - bitsandbytes is very slow (int8 6.8 tokens/s), so we don't benchmark it.
 - eetq-8bit doesn't require specific model.
-- TGT GPTQ 8bit load failed: Server error: module 'triton.compiler' has no attribute 'OutOfResources'
-    - TGT GPTQ bit use exllama or triton backend.
+- TGI GPTQ 8bit load failed: Server error: module 'triton.compiler' has no attribute 'OutOfResources'
+    - TGI GPTQ bit use exllama or triton backend.
 
 #### 4Bit Quantisation
 
@@ -101,3 +102,5 @@ Data:
 | ------- | ----- | ----- | ----- | ----- | ----- |
 | TGI AWQ 4bit | 336.47 | 1.61 | 102.00 | 0.48 | 94.84 |
 | vLLM AWQ 4bit | 29.03 | 0.14 | 37.48 | 0.19 | 3711.0 |
+| llama-cpp-python GGUF 4bit| - | - | - | - | - |
+| llama-cpp-python GGUF 4bit with CPU | - | - | - | - | - |
