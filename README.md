@@ -30,6 +30,7 @@ LLM Inference benchmark
 | [CTranslate2](https://github.com/OpenNMT/CTranslate2) | GPU | Low | No | Yes | Yes | Yes | Yes |
 | [TGI](https://github.com/huggingface/text-generation-inference) | GPU | Medium | Yes | awq/eetq/gptq/bitsandbytes | Yes | Yes | Yes |
 | [llama-cpp](https://github.com/ggerganov/llama.cpp)*** | GPU/CPU | High | No | GGUF/GPTQ | Yes | No | Yes |
+| [lmdeploy](https://github.com/InternLM/lmdeploy) | GPU | Medium | No | AWQ | Yes | Yes | Yes
 
 - *PEFT Adapters: support to load seperate PEFT adapters(mostly lora).
 - **Compatibility: High: Compatible with most models; Medium: Compatible with some models; Low: Compatible with few models.
@@ -77,6 +78,7 @@ Data:
 | vLLM | 222.63 | 1.08 | 62.69 | 0.30 | 95.43 |
 | TensorRT | - | - | - | - | - |
 | CTranslate2* | - | - | - | - | - |
+| lmdeploy | 236.03 | 1.15 | 67.86 | 0.33 | 76.81 |
 
 - **bs**: Batch Size. `bs=4` indicates the batch size is 4.
 - **TPS**: Tokens Per Second.

@@ -674,3 +674,63 @@ docker run --rm --cap-add SYS_RESOURCE -e USE_MLOCK=0 --gpus all  -e MODEL=/var/
 ```bash
 docker run --rm --cap-add SYS_RESOURCE -e USE_MLOCK=0 --gpus all  -e MODEL=/var/model/yi-6b.Q4_K_M.gguf -v $HOME/models/Yi-6B-GGUF:/var/model -t ghcr.io/abetlen/llama-cpp-python:latest
 ```
+
+### lmdeploy
+
+```bash
+# install latest lmdeploy
+$ pip install -U https://github.com/InternLM/lmdeploy/releases/download/v0.1.0a2/lmdeploy-0.1.0a2-cp310-cp310-manylinux2014_x86_64.whl
+# convert and serve
+lmdeploy serve api_server ~/models/Yi-6B-Chat --model-name yi --instance_num 32 --tp 1
+
+bs=4:
+
+```bash
+locust -t 30s --provider openai -u 4 -r 4 -H http://127.0.0.1:23333 -p 512 -o 200 --prompt-randomize --api-key EMPTY --model=yi --chat --tokenizer ~/models/Yi-6B-Chat/
+=================================== Summary ====================================
+Provider           : openai
+Model              : yi
+Prompt Tokens      : 521.0
+Generation Tokens  : 200
+Stream             : False
+Temperature        : 1.0
+Logprobs           : None
+Concurrency        : 4
+Time To First Token:
+Latency Per Token  :
+Num Tokens         : 200.2941176470588
+Total Latency      : 3394.2972838823653
+Num Requests       : 34
+Qps                : 1.145362877124593
+================================================================================
+Tokens per Second = 200.2941176470588 * 1000 / 3394.2972838823653 * 4 = 236.03
+
+```
+
+bs=1 (stream=True)
+
+```bash
+locust -t 30s --provider openai -u 1 -r 1 -H http://127.0.0.1:23333 -p 512 -o 200 --prompt-randomize --api-key EMPTY --model=yi --tokenizer ~/models/Yi-6B-Chat/ --stream
+=================================== Summary ====================================
+Provider           : openai
+Model              : yi
+Prompt Tokens      : 512.0
+Generation Tokens  : 200
+Stream             : True
+Temperature        : 1.0
+Logprobs           : None
+Concurrency        : 1
+Time To First Token: 76.80950477775797
+Latency Per Token  : 14.349937231366368
+Num Tokens         : 198.44444444444446
+Total Latency      : 2924.3993964444903
+Num Requests       : 9
+Qps                : 0.3306512429762835
+================================================================================
+Tokens per Second = 198.44444444444446 * 1000 / 2924.3993964444903 = 67.86
+```
+
+```bash
+# 转换格式，可以看到确实保持 fp16 精度不变。
+$ lmdeploy convert ~/models/Yi-6B-Chat --model-name yi --model-format hf
+```
