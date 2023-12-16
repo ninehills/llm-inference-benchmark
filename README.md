@@ -31,6 +31,7 @@ LLM Inference benchmark
 | [TGI](https://github.com/huggingface/text-generation-inference) | GPU | Medium | Yes | awq/eetq/gptq/bitsandbytes | Yes | Yes | Yes |
 | [llama-cpp](https://github.com/ggerganov/llama.cpp)*** | GPU/CPU | High | No | GGUF/GPTQ | Yes | No | Yes |
 | [lmdeploy](https://github.com/InternLM/lmdeploy) | GPU | Medium | No | AWQ | Yes | Yes | Yes
+| [Deepspeed-FastGen](https://github.com/microsoft/DeepSpeed/tree/master/blogs/deepspeed-fastgen) | GPU | Low | No | No | Yes | Yes | Yes |
 
 - *PEFT Adapters: support to load seperate PEFT adapters(mostly lora).
 - **Compatibility: High: Compatible with most models; Medium: Compatible with some models; Low: Compatible with few models.
