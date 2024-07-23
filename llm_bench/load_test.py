@@ -653,14 +653,16 @@ class LLMUser(HttpUser):
         if not self.environment.parsed_options.prompt_randomize:
             return self.prompt
         # single letters are single tokens
-        return (
-            " ".join(
-                chr(ord("a") + random.randint(0, 25))
-                for _ in range(prompt_random_tokens)
-            )
-            + " "
-            + self.prompt
-        )
+        new_prompt = self.prompt.replace("Oops!", " ".join(chr(ord("a") + random.randint(0, 25)) for _ in range(prompt_random_tokens)) + "Oops!")
+        return new_prompt
+        # return (
+        #     " ".join(
+        #         chr(ord("a") + random.randint(0, 25))
+        #         for _ in range(prompt_random_tokens)
+        #     )
+        #     + " "
+        #     + self.prompt
+        # )
 
     @task
     def generate_text(self):
